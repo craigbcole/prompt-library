@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Library for Imagine",
+  "version": "1.0.1",
+  "description": "Save, organize, and reuse your prompts and generations from Grok",
+  "icons": {
+    "128": "icon128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://grok.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://grok.com/imagine/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
