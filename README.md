@@ -19,7 +19,8 @@ A free, private Chrome/Brave extension that automatically saves every prompt and
 All data stays 100% on your computer — nothing is sent anywhere.
 
 ### Screenshots
-(You can add 2–3 screenshots here later)
+<img width="462" height="511" alt="image" src="https://github.com/user-attachments/assets/65f6b867-4be9-470d-bd65-7966158037a8" />
+
 
 ### Feedback / Issues
 Found a bug or want a new feature? Open an issue!
