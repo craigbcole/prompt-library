@@ -1,6 +1,3 @@
-# prompt-library
-A clean Prompt Library for Grok Imagine — save, search, and reuse every generation
-
 # Grok Imagine Prompt Library
 
 A free, private Chrome/Brave extension that automatically saves every prompt and generation from Grok Imagine.
