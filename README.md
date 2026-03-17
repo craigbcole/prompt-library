@@ -1,4 +1,4 @@
-# Grok Imagine Prompt Library
+# Prompt Library for Imagine
 
 A free, private Chrome/Brave extension that automatically saves every prompt and generation from Grok Imagine.
 
