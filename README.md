@@ -20,6 +20,8 @@ All data stays 100% on your computer — nothing is sent anywhere.
 
 ### Screenshots
 <img width="462" height="511" alt="image" src="https://github.com/user-attachments/assets/65f6b867-4be9-470d-bd65-7966158037a8" />
+<img width="462" height="511" alt="image" src="https://github.com/user-attachments/assets/99a5d60a-61ba-4887-b87f-c3b36869fc5a" />
+
 
 
 ### Feedback / Issues
