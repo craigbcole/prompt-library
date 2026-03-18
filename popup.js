@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modalShare = document.getElementById('modal-share');
   const clearLibraryBtn = document.getElementById('clearLibrary');
   const exportLibraryBtn = document.getElementById('exportLibrary');
+  const importLibraryBtn = document.getElementById('importLibrary');
+  const importFileInput = document.getElementById('importFile');
 
   let currentHistory = [];
   let currentIndex = -1;
@@ -54,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (currentIndex === -1) return;
     const item = currentHistory[currentIndex];
     navigator.clipboard.writeText(item.prompt);
-    alert('✅ Prompt copied to clipboard!');
+    alert('Prompt copied to clipboard!');
   });
 
   libraryDiv.addEventListener('click', (event) => {
@@ -71,33 +73,55 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   clearLibraryBtn.addEventListener('click', async () => {
-    if (!confirm('⚠️ This will permanently delete ALL saved prompts.\n\nAre you sure?')) return;
+    if (!confirm('This will permanently delete ALL saved prompts.\n\nAre you sure?')) return;
     await chrome.storage.local.remove('promptHistory');
     currentHistory = [];
     loadLibrary();
-    alert('✅ Prompt Library cleared.');
+    alert('Prompt Library cleared.');
   });
 
-  // Export Library - fixed alert (no emoji)
   exportLibraryBtn.addEventListener('click', async () => {
     const data = await chrome.storage.local.get('promptHistory');
     const history = data.promptHistory || [];
-
-    if (history.length === 0) {
-      alert('Nothing to export yet.');
-      return;
-    }
+    if (history.length === 0) return alert('Nothing to export yet.');
 
     const jsonString = JSON.stringify(history, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-
     const a = document.createElement('a');
     a.href = url;
     a.download = `prompt-library-export-${new Date().toISOString().slice(0,10)}.json`;
     a.click();
-
     URL.revokeObjectURL(url);
     alert(`Exported ${history.length} prompts!`);
+  });
+
+  // Import Library
+  importLibraryBtn.addEventListener('click', () => {
+    importFileInput.click();
+  });
+
+  importFileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!confirm(`Import ${file.name}?\n\nThis will REPLACE your current library.`)) {
+      importFileInput.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const importedData = JSON.parse(event.target.result);
+        await chrome.storage.local.set({ promptHistory: importedData });
+        loadLibrary();
+        alert(`Imported ${importedData.length} prompts successfully!`);
+      } catch (err) {
+        alert('Invalid JSON file.');
+      }
+    };
+    reader.readAsText(file);
+    importFileInput.value = '';
   });
 });
