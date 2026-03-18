@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     alert(`Exported ${history.length} prompts!`);
   });
 
-  // Import Library
+  // Import Library — now APPENDS (merges) instead of replacing
   importLibraryBtn.addEventListener('click', () => {
     importFileInput.click();
   });
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (!confirm(`Import ${file.name}?\n\nThis will REPLACE your current library.`)) {
+    if (!confirm(`Import ${file.name}?\n\nThis will ADD the imported prompts to your existing library (duplicates will be skipped).`)) {
       importFileInput.value = '';
       return;
     }
@@ -114,9 +114,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     reader.onload = async (event) => {
       try {
         const importedData = JSON.parse(event.target.result);
-        await chrome.storage.local.set({ promptHistory: importedData });
+        
+        // Merge logic: keep existing + add only new ones (dedup by id)
+        const data = await chrome.storage.local.get('promptHistory');
+        let current = data.promptHistory || [];
+        
+        const existingIds = new Set(current.map(item => item.id));
+        const newItems = importedData.filter(item => !existingIds.has(item.id));
+        
+        const merged = [...newItems, ...current]; // new items on top
+        
+        await chrome.storage.local.set({ promptHistory: merged });
         loadLibrary();
-        alert(`Imported ${importedData.length} prompts successfully!`);
+        
+        alert(`Merged ${newItems.length} new prompts! (Total now: ${merged.length})`);
       } catch (err) {
         alert('Invalid JSON file.');
       }
